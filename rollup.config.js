@@ -31,9 +31,11 @@ export default {
   input: 'src/main.js',
   output: {
     sourcemap: true,
-    format: 'iife',
+    // NOTE format esm is needed for dynamic import()
+    format: 'esm',
+    // output.dir is required for format esm
+    dir: 'public/build',
     name: 'app',
-    file: nollup ? 'build/bundle.js' : 'public/build/bundle.js',
   },
   plugins: [
     svelte({
@@ -82,17 +84,19 @@ export default {
     // Automatically create missing imported files. This helps keeping
     // the HMR server alive, because Rollup watch tends to crash and
     // hang indefinitely after you've tried to import a missing file.
-    hot && autoCreate({
-      include: 'src/**/*',
-      // Set false to prevent recreating a file that has just been
-      // deleted (Rollup watch will crash when you do that though).
-      recreate: true,
-    }),
+    hot &&
+      autoCreate({
+        include: 'src/**/*',
+        // Set false to prevent recreating a file that has just been
+        // deleted (Rollup watch will crash when you do that though).
+        recreate: true,
+      }),
 
-    hot && hmr({
-      public: 'public',
-      inMemory: true
-    }),
+    hot &&
+      hmr({
+        public: 'public',
+        inMemory: true,
+      }),
   ],
   watch: {
     clearScreen: false,
